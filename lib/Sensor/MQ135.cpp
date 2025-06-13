@@ -1,6 +1,6 @@
 // MQ135 Gas Sensor for Ammonia (NH3)
 
-#include "MQ135.h" // Assuming MQ135.h declares the MQ135 class
+#include "MQ135.h"   // Assuming MQ135.h declares the MQ135 class
 #include <Arduino.h> // For analogRead, delay, etc.
 #include <math.h>    // For pow function
 
@@ -30,13 +30,14 @@
 #define ADC_MAX_VALUE 1023.0f // For 10-bit ADC (e.g., Arduino Uno, Mega)
 // #define ADC_MAX_VALUE 4095.0f // For 12-bit ADC (e.g., ESP32)
 
-
-MQ135::MQ135(int analogPin) {
+MQ135::MQ135(int analogPin)
+{
     _analogPin = analogPin;
     _R0 = DEFAULT_R0; // Initialize R0 with a default; calibration is crucial.
 }
 
-void MQ135::begin() {
+void MQ135::begin()
+{
     // pinMode(_analogPin, INPUT); // Generally not required for analogRead on Arduino
     // You can add a burn-in delay here if desired, though burn-in is best done externally.
 }
@@ -45,7 +46,8 @@ void MQ135::begin() {
  * @brief Reads the raw ADC value from the sensor's analog output.
  * @return The raw ADC value (e.g., 0-1023 for a 10-bit ADC).
  */
-int MQ135::readRawADC() {
+int MQ135::readRawADC()
+{
     return analogRead(_analogPin);
 }
 
@@ -54,17 +56,20 @@ int MQ135::readRawADC() {
  * This value changes based on gas concentration.
  * @return The sensor resistance (Rs) in kOhms.
  */
-float MQ135::getRs() {
+float MQ135::getRs()
+{
     int adc_raw = readRawADC();
     float sensor_voltage_rl = (static_cast<float>(adc_raw) / ADC_MAX_VALUE) * VCC_VOLTAGE;
 
     // Prevent division by zero or invalid calculations if sensor_voltage_rl is at extremes.
     // If sensor_voltage_rl is very low (high Rs), cap it to avoid infinite Rs.
-    if (sensor_voltage_rl < 0.001f) {
+    if (sensor_voltage_rl < 0.001f)
+    {
         sensor_voltage_rl = 0.001f;
     }
     // If sensor_voltage_rl is very high (low Rs, near VCC), cap it to avoid negative or zero Rs.
-    if (sensor_voltage_rl > (VCC_VOLTAGE - 0.001f)) {
+    if (sensor_voltage_rl > (VCC_VOLTAGE - 0.001f))
+    {
         sensor_voltage_rl = VCC_VOLTAGE - 0.001f;
     }
 
@@ -80,15 +85,20 @@ float MQ135::getRs() {
  * @param rs_in_clean_air Optional: directly provide an Rs value measured in clean air.
  *                        If 0 (default), it will take multiple internal readings and average them.
  */
-void MQ135::calibrateR0(float rs_in_clean_air) {
-    if (rs_in_clean_air > 0.0f) {
+void MQ135::calibrateR0(float rs_in_clean_air)
+{
+    if (rs_in_clean_air > 0.0f)
+    {
         _R0 = rs_in_clean_air;
-    } else {
+    }
+    else
+    {
         // Perform an averaged reading for R0 calibration
         float sum_rs = 0.0f;
         const int num_samples = 20; // Number of samples to average for calibration
         // Serial.println("Calibrating R0. Ensure sensor is in clean air."); // Debug
-        for (int i = 0; i < num_samples; i++) {
+        for (int i = 0; i < num_samples; i++)
+        {
             sum_rs += getRs();
             delay(100); // Short delay between samples
         }
@@ -101,8 +111,10 @@ void MQ135::calibrateR0(float rs_in_clean_air) {
  * @brief Sets a specific R0 value. Useful if R0 is known from previous calibration.
  * @param r0_value The R0 value (resistance in clean air) to set.
  */
-void MQ135::setR0(float r0_value) {
-    if (r0_value > 0.0f) {
+void MQ135::setR0(float r0_value)
+{
+    if (r0_value > 0.0f)
+    {
         _R0 = r0_value;
     }
 }
@@ -111,7 +123,8 @@ void MQ135::setR0(float r0_value) {
  * @brief Gets the current R0 value being used by the sensor.
  * @return The R0 value in kOhms.
  */
-float MQ135::getR0() {
+float MQ135::getR0()
+{
     return _R0;
 }
 
@@ -120,20 +133,24 @@ float MQ135::getR0() {
  * Ensure R0 is properly calibrated for accurate readings.
  * @return Ammonia concentration in PPM. Returns 0.0f if R0 is not valid or readings are problematic.
  */
-float MQ135::readAmmoniaPPM() {
-    if (_R0 <= 0.0f) {
+float MQ135::readAmmoniaPPM()
+{
+    if (_R0 <= 0.0f)
+    {
         // Serial.println("Error: R0 is not calibrated or set to a valid value."); // Debug
         return 0.0f; // R0 must be positive and calibrated.
     }
 
     float rs = getRs();
-    if (rs < 0.0f) { // Should ideally not happen due to getRs() guards
+    if (rs < 0.0f)
+    { // Should ideally not happen due to getRs() guards
         // Serial.println("Error: Invalid Rs value."); // Debug
         return 0.0f;
     }
 
     float ratio = rs / _R0;
-    if (ratio <= 0.0f) { // Ratio must be positive for the pow function.
+    if (ratio <= 0.0f)
+    { // Ratio must be positive for the pow function.
         // Serial.println("Error: Invalid Rs/R0 ratio."); // Debug
         return 0.0f;
     }
@@ -149,12 +166,15 @@ float MQ135::readAmmoniaPPM() {
  * or temperature/humidity corrections.
  * @return The Rs/R0 ratio. Returns 0.0f if R0 is not valid.
  */
-float MQ135::getRsR0Ratio() {
-    if (_R0 <= 0.0f) {
+float MQ135::getRsR0Ratio()
+{
+    if (_R0 <= 0.0f)
+    {
         return 0.0f;
     }
     float rs = getRs();
-    if (rs < 0.0f) {
+    if (rs < 0.0f)
+    {
         return 0.0f;
     }
     return rs / _R0;
