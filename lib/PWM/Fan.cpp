@@ -1,0 +1,1 @@
+// 3pin pc fan (SU1225FD12M-RH ; 12v 0.13a)
