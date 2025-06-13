@@ -1,7 +1,7 @@
 #ifndef LCD_DISPLAY_H
 #define LCD_DISPLAY_H
 
-#include <Arduino.h>
+#include <Arduino.h> // For String, uint8_t
 #include <LiquidCrystal_I2C.h>
 
 class LCDDisplay

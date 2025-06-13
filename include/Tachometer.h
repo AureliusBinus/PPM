@@ -23,8 +23,6 @@ private:
     volatile unsigned long _lastReadTime;
 
     // Static pointer to the instance for the ISR
-    // This simple implementation supports only one Tachometer instance.
-    // For multiple instances, a more complex ISR dispatch mechanism would be needed.
     static Tachometer *_instance;
 
     // Static ISR function that calls the instance-specific wrapper

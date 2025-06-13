@@ -6,10 +6,10 @@
 class PWMFanControl
 {
 public:
-    PWMFanControl(int pwmPin);
+    PWMFanControl(int pwmPin); // Added constructor
     void begin();
-    void setSpeed(int percentage);       // Speed from 0 to 100%
-    void setRawDutyCycle(int dutyCycle); // Raw PWM value (0-255 for Arduino Nano)
+    void setSpeed(int percentage);
+    void setRawDutyCycle(int dutyCycle);
     void off();
 
 private:
