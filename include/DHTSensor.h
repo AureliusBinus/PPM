@@ -1,20 +1,20 @@
-#ifndef DHT22_H
-#define DHT22_H
+#ifndef DHTSENSOR_H // Renamed from DHT22_H
+#define DHTSENSOR_H // Renamed from DHT22_H
 
-#include <DHT.h> // Add this include to make DHT type available
+#include <DHT.h>
 
-class DHT22
+class DHTSensor // Renamed from DHT22
 {
 public:
-    DHT22(int pin);
+    DHTSensor(int pin); // Renamed from DHT22
     void begin();
     float readTemperature(bool isFahrenheit = false);
     float readHumidity();
     float computeHeatIndex(float temperatureCelsius = NAN, float humidityPercent = NAN, bool isFahrenheit = false);
 
 private:
-    DHT _dht; // Declare _dht as type DHT
+    DHT _dht;
     int _pin;
 };
 
-#endif // DHT22_H
+#endif // DHTSENSOR_H // Renamed from DHT22_H
